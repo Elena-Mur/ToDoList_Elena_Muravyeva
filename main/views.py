@@ -7,9 +7,11 @@ from django.shortcuts import render
 #  user = User('Bob',23)
 data = {
     'lists': [
-        {'name': 'Работа', 'is_done': True},
-        {'name': 'Дом', 'is_done': False},
-        {'name': 'Учеба', 'is_done': True}
+        {'id': 1, 'name': 'Позвонить', 'is_done': True},
+        {'id': 2, 'name': 'Написать', 'is_done': False},
+        {'id': 3, 'name': 'Заказать', 'is_done': True},
+        {'id': 4, 'name': 'Сделать', 'is_done': False},
+
     ],
     'user_name': 'admin'
 }
@@ -19,3 +21,7 @@ data = {
 def main_view(request):
     context = data
     return render(request, 'index.html', context)
+
+
+def edit_view(request, pk):
+    pass

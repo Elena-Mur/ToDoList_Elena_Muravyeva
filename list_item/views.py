@@ -11,6 +11,6 @@ data = {
 
 
 # Create your views here.
-def list_view(request):
+def list_item_view(request):
     context = data
     return render(request, 'list.html', context)
