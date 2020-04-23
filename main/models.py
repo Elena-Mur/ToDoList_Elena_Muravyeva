@@ -9,9 +9,10 @@ class ListModel(models.Model):
     modified = models.DateTimeField(auto_now=True)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     is_done = models.BooleanField(default=False)
+    priority = models.SmallIntegerField(verbose_name='Приоритет', default=0)
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = 'Список дел'
