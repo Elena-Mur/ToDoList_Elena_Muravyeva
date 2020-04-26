@@ -1,27 +1,28 @@
 from django.shortcuts import render
-
-# class User:
-#     def __init__(self,name,age):
-#         self.name = name
-#         self.age = age
-#  user = User('Bob',23)
-data = {
-    'lists': [
-        {'id': 1, 'name': 'Позвонить', 'is_done': True},
-        {'id': 2, 'name': 'Написать', 'is_done': False},
-        {'id': 3, 'name': 'Заказать', 'is_done': True},
-        {'id': 4, 'name': 'Сделать', 'is_done': False},
-
-    ],
-    'user_name': 'admin'
-}
+from main.models import ListModel
 
 
-# Create your views here.
 def main_view(request):
-    context = data
+    """главная view"""
+    user = request.user
+    lists = ListModel.objects.filter(
+        user=user
+    ).order_by('created')
+
+    context = {'lists': lists,
+               'user': request.user.username}
     return render(request, 'index.html', context)
 
 
 def edit_view(request, pk):
     pass
+
+
+def delete_view(request, pk):
+    pass
+
+
+def new_list_view(request):
+    """view создания нового списка"""
+
+    return render(request, 'new_list.html')

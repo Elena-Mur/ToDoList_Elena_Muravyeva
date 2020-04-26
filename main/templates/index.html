@@ -5,16 +5,19 @@
 {% endblock %}
 {% block header %}
     <div class="table-data_table-header-item-1">TO DO List</div>
+    <a class="add_new_list" href="{% url 'main:new_list' %}">
+                    <div class="header__button-create-bundle">+</div>
+                </a>
 {% endblock %}
 {% block body %}
         {% for list in lists %}
             <div class="table-data__table-row">
             <div class="table-row_table_cell-1">
-                <a href="#">
+                <a href="{% url "list_item:list_item" pk=list.id %}">
                     {% if list.is_done %}
-                        <li>{{ list.name }}</li>
-                    {% else %}
                         <li class="is_done_text">{{ list.name }}</li>
+                    {% else %}
+                       <li>{{ list.name }}</li>
                     {% endif %}
                 </a>
             </div>
@@ -29,7 +32,7 @@
                             </svg>
                         </a>
                     </div>
-                    <a class="delete_button" href="#">
+                    <a class="delete_button" href="{% url 'main:delete' pk=list.id %}">
                         <div class="table-row_table_icon">
                             <svg width="20" height="22" viewBox="0 0 20 22" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">

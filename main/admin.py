@@ -4,7 +4,7 @@ from main.models import ListModel
 
 # Register your models here.
 class ListAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created', 'name', 'is_done', 'user']
+    list_display = ['id', 'created', 'name', 'is_done', 'user', 'priority']
     list_filter = ['id', 'created', 'name', 'is_done']
     search_fields = ['name', 'user']
 
