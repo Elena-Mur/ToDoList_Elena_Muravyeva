@@ -16,3 +16,13 @@ def main_view(request):
 
 def edit_view(request, pk):
     pass
+
+
+def delete_view(request, pk):
+    pass
+
+
+def new_list_view(request):
+    """view создания нового списка"""
+
+    return render(request, 'new_list.html')
