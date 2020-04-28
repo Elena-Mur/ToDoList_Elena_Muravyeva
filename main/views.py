@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from main.models import ListModel
+from django.shortcuts import render, reverse, redirect
+from main.forms import ListModel, ListForm
 
 
 def main_view(request):
@@ -22,7 +22,18 @@ def delete_view(request, pk):
     pass
 
 
-def new_list_view(request):
+def create_view(request):
     """view создания нового списка"""
+    form = ListForm()
+    if request.method == 'POST':
+        name = request.POST['name']
 
-    return render(request, 'new_list.html')
+        form = ListForm({
+            'name': name,
+            'user': request.user
+        })
+        success_url = reverse('main:main')
+        if form.is_valid():
+            form.save()
+            return redirect(success_url)
+    return render(request, 'new_list.html', {'form': form})
