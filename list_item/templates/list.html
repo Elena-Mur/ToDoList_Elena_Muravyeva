@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block header %}
-    <div class="table-data_table-header-item-1">{{ list }}</div>
+    <div class="table-data_table-header-item-1">{{ list_name }}</div>
     <a class="add_new_list" href="/create/">
                     <div class="header__button-create-bundle">+</div>
                 </a>
@@ -21,7 +21,7 @@
             {% endif %}
                 <div class="buttons">
                     <div class="table-data-two_table-icon">
-                        <a href='{% url 'list_item:edit' %}'>
+                        <a href='{% url 'list_item:edit' pk=list.id %}'>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -42,7 +42,7 @@
                     </div>
                     {% endif %}
                     <div class="table-row_table_icon">
-                        <a class="delete_button" href="{% url 'list_item:delete'  %}">
+                        <a class="delete_button" href="{% url 'list_item:delete' pk=list.id %}">
                             <svg width="20" height="22" viewBox="0 0 20 22" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd"

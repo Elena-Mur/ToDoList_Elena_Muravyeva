@@ -6,13 +6,13 @@ from main.models import ListModel
 # Create your views here.
 def list_item_view(request, pk):
     """view для элементов списка"""
-
-    lists = Listitem.objects.filter(list=pk,
+    user = request.user
+    lists = Listitem.objects.filter(list=pk
                                     ).order_by('created')
-    name = ListModel.objects.filter(id=pk).first()
+    list_name = ListModel.objects.filter(id=pk).first()
     context = {'lists': lists,
-               'user': request.user.username,
-               'list': name
+               'user': user.username,
+               'list_name': list_name.name
                }
     return render(request, 'list.html', context)
 

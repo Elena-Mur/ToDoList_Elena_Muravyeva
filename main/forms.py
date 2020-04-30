@@ -7,7 +7,7 @@ class ListForm(forms.ModelForm):
     """
     Форма натсроек расписания обмена
     """
-    name = forms.CharField(widget=forms.TextInput())
+    name = forms.CharField(required=True, widget=forms.TextInput())
 
     class Meta:
         model = ListModel
