@@ -17,3 +17,4 @@ class Listitem(models.Model):
 
     class Meta:
         verbose_name = 'Элемент списка'
+        unique_together = ('name', 'list', 'expire_date')

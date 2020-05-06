@@ -66,4 +66,15 @@
           </div>
         {% endfor %}
     {% endif %}
+    {% if list_pages.1 %}
+       <div class="table-data__table-row">
+           <div class="paginator_class">
+               <ul class="pagination-wrapper_button">
+                    {% for list_item_page in list_pages %}
+                       <li><a class="active" href="{{pk}}?list_item_page={{ list_item_page }}">{{ list_item_page }}</a></li>
+                   {% endfor %}
+               </ul>
+           </div>
+        </div>
+   {% endif %}
 {% endblock %}

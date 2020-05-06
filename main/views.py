@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
+from list_item.models import Listitem
+
 
 
 PAGE_COUNT = 6
@@ -59,3 +61,6 @@ def create_view(request):
             form.save()
             return redirect(success_url)
     return render(request, 'new_list.html', {'form': form})
+
+
+

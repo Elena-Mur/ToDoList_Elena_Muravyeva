@@ -16,7 +16,7 @@ class ListitemForm(forms.ModelForm):
         fields = ('name', 'expire_date', 'list')
         error_messages = {
             NON_FIELD_ERRORS: {
-                'unique_together': 'Введите другое имя...',
+                'unique_together': 'Введите другое имя или дату...',
 
             }
         }
