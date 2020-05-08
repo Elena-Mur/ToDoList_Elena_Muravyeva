@@ -9,7 +9,7 @@ class Listitem(models.Model):
     modified = models.DateTimeField(auto_now=True)
     list = models.ForeignKey('main.ListModel', on_delete=models.CASCADE, verbose_name='Список дел')
     is_done = models.BooleanField(default=False)
-    expare_date = models.DateField(blank=True, null=True)
+    expire_date = models.DateField(blank=True, null=True)
     priority = models.SmallIntegerField(verbose_name='Приоритет', default=0)
 
     def __str__(self):
@@ -17,3 +17,4 @@ class Listitem(models.Model):
 
     class Meta:
         verbose_name = 'Элемент списка'
+        unique_together = ('name', 'list', 'expire_date')

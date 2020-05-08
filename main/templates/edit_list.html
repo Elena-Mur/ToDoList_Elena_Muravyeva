@@ -2,7 +2,7 @@
 {% extends 'master_list_item.html' %}
     {% block title %}
           <div class="auth__column_right_form__header">
-               Новый список
+               Редактирование списка
           </div>
           <form class="auth_form_class" action="" id="auth_form" method="POST">{% csrf_token %}
               {{ form.name}}

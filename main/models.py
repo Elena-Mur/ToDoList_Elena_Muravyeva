@@ -12,7 +12,8 @@ class ListModel(models.Model):
     priority = models.SmallIntegerField(verbose_name='Приоритет', default=0)
 
     def __str__(self):
-        return self.name
+        return f'{self.id}: {self.name}: {self.user}'
 
     class Meta:
         verbose_name = 'Список дел'
+        unique_together = ('name', 'user')

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from registration.forms import CustomUserForm, LoginForm
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
 
 
 def create_user(request):
@@ -34,3 +34,10 @@ def login_view(request):
                 return redirect(success_url)
 
     return render(request, 'login.html', {'form': form})
+
+
+def logout_view(request):
+
+    login_url = reverse('registration:login')
+    logout(request)
+    return redirect(login_url)

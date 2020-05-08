@@ -5,10 +5,11 @@
 {% endblock %}
 
 {% block header %}
-    <div class="table-data_table-header-item-1">{{ list_name }}</div>
-    <a class="add_new_list" href="/create/">
+    <div class="table-data_table-header-item-1">{{ list_name.name }}</div>
+    <a class="add_new_list" href="{% url 'list_item:create' pk=list_name.id%}">
                     <div class="header__button-create-bundle">+</div>
                 </a>
+                     </div>
 {% endblock %}
 
         {% block body %}
@@ -30,9 +31,9 @@
                             </svg>
                         </a>
                     </div>
-                    {% if list.expare_date %}
+                    {% if list.expire_date %}
                        <a href="#">
-                        <div class="calendarik">{{ list.expare_date }}</div>
+                        <div class="calendarik">{{ list.expire_date }}</div>
                         </a>
                     {% else %}
                         <div class="calendarik">
@@ -41,6 +42,7 @@
                             </a>
                     </div>
                     {% endif %}
+
                     <div class="table-row_table_icon">
                         <a class="delete_button" href="{% url 'list_item:delete' pk=list.id %}">
                             <svg width="20" height="22" viewBox="0 0 20 22" fill="none"
@@ -56,3 +58,23 @@
 
         {% endfor %}
     {% endblock %}
+{% block empty_div %}
+    {% if lists|length < 6 %}
+        {% for _ in lists|get_count %}
+          <div class="table-data__table-row">
+            <div class="table-row_table_cell-1"></div>
+          </div>
+        {% endfor %}
+    {% endif %}
+    {% if list_pages.1 %}
+       <div class="table-data__table-row">
+           <div class="paginator_class">
+               <ul class="pagination-wrapper_button">
+                    {% for list_item_page in list_pages %}
+                       <li><a class="active" href="{{pk}}?list_item_page={{ list_item_page }}">{{ list_item_page }}</a></li>
+                   {% endfor %}
+               </ul>
+           </div>
+        </div>
+   {% endif %}
+{% endblock %}
