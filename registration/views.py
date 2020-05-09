@@ -37,7 +37,7 @@ def login_view(request):
 
 
 def logout_view(request):
-
+    """Разлогирование"""
     login_url = reverse('registration:login')
     logout(request)
     return redirect(login_url)

@@ -12,9 +12,13 @@ class Listitem(models.Model):
     expire_date = models.DateField(blank=True, null=True)
     priority = models.SmallIntegerField(verbose_name='Приоритет', default=0)
 
-    def __str__(self):
-        return self.name
+def save(self,force_insert=False, force_update=False, using=None,update_fields=None):
+    list_=self.list
+    super.save()
 
-    class Meta:
-        verbose_name = 'Элемент списка'
-        unique_together = ('name', 'list', 'expire_date')
+def __str__(self):
+    return self.name
+
+class Meta:
+    verbose_name = 'Элемент списка'
+    unique_together = ('name', 'list', 'expire_date')

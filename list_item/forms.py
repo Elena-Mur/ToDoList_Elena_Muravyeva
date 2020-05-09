@@ -9,7 +9,7 @@ class ListitemForm(forms.ModelForm):
     Форма натсроек расписания обмена
     """
     name = forms.CharField(required=True, widget=forms.TextInput())
-    expire_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    expire_date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
 
     class Meta:
         model = Listitem

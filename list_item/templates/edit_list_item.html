@@ -7,8 +7,8 @@
               {{ form.name}}
                 {{ form.expire_date }}
     {% endblock %}
-    {% block cancel_btn %}
-                <a href="{% url 'list_item:list_item' pk=obj.list_id %}">
-                  <div class="auth__button_submit" id="login-cancel-btn" ><span>&#9587</span></div>
-                </a>
+{% block cancel_btn %}
+        <a href="{% url 'list_item:list_item' pk=pk %}">
+            <div class="auth__button_submit" id="login-cancel-btn" ><span>&#9587</span></div>
+        </a>
     {% endblock %}
