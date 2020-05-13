@@ -95,6 +95,16 @@ body {
   line-height: 64px;
   background: #004949;
   color: #ffffff; }
+#message_text {
+  text-align: center;
+  grid-column: 1/4;
+  grid-row: 2/2;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 64px;
+}
 
 
 .form__header_title_enter {
@@ -220,3 +230,12 @@ body {
     color: #0085FF; }
   .auth__password_recovery a:visited {
     color: #55acfd; }
+  .auth__column_right_form {
+  display: grid;
+  grid-template-columns: 1fr 5fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  align-items: center;
+  box-shadow: -10px -10px 10px -10px rgba(34, 60, 80, 0.8) inset;
+  border-radius: 10px;
+}
+

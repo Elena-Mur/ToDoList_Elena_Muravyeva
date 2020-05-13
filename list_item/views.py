@@ -1,11 +1,11 @@
 from list_item.models import Listitem
 from main.models import ListModel
 from list_item.forms import ListitemForm
-from main.forms import ListForm
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponse
 import json
@@ -13,6 +13,7 @@ import json
 PAGE_COUNT = 6
 
 
+@login_required(login_url='/registration/login/')
 # Create your views here.
 def list_item_view(request, pk):
     """view для элементов списка"""
@@ -43,6 +44,7 @@ def list_item_view(request, pk):
     return render(request, 'list.html', context)
 
 
+@login_required(login_url='/registration/login/')
 def list_item_edit(request, pk):
     list_item = Listitem.objects.filter(id=pk).first()
 
@@ -63,10 +65,22 @@ def list_item_edit(request, pk):
     return render(request, "edit_list_item.html", {'form': form, 'pk': list_id})
 
 
+@login_required(login_url='/registration/login/')
 def list_item_delete(request, pk):
+    if request.method == 'POST':
+        list_item = Listitem.objects.filter(id=pk).first()
+        if list_item:
+            list_item.delete()
+            return HttpResponse(status=201)
+    return HttpResponse(status=404)
+
+
+@login_required(login_url='/registration/login/')
+def all_done_view(request):
     pass
 
 
+@login_required(login_url='/registration/login/')
 def create_item_view(request, pk):
     form = ListitemForm()
     if request.method == 'POST':
@@ -85,6 +99,7 @@ def create_item_view(request, pk):
     return render(request, 'new_list_item.html', {'form': form, 'pk': pk})
 
 
+@login_required(login_url='/registration/login/')
 def done_view(request):
     data = json.loads(request.body.decode())
     pk = int(data['id'])
