@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
-from list_item.models import Listitem
+from django.http import HttpResponse
 
 PAGE_COUNT = 6
 
@@ -54,7 +54,12 @@ def edit_view(request, pk):
 
 @login_required(login_url='registration/login/')
 def delete_view(request, pk):
-    pass
+    if request.method == 'POST':
+        list_ = ListModel.objects.filter(id=pk).first()
+        if list_:
+            list_.delete()
+            return HttpResponse(status=201)
+    return HttpResponse(status=404)
 
 
 @login_required(login_url='registration/login/')
