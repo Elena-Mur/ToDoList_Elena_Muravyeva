@@ -4,11 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
-from list_item.models import Listitem
-
-
+from django.http import HttpResponse
 
 PAGE_COUNT = 6
+
 
 @login_required(login_url='registration/login/')
 def main_view(request):
@@ -16,7 +15,7 @@ def main_view(request):
     user = request.user
     lists = ListModel.objects.filter(
         user=user
-    ).order_by('-created')
+    ).order_by('-created').order_by('-modified')
 
     paginator = Paginator(lists, PAGE_COUNT)
     page = request.GET.get('page')
@@ -37,12 +36,30 @@ def main_view(request):
 
 @login_required(login_url='registration/login/')
 def edit_view(request, pk):
-    pass
+    list_ = ListModel.objects.filter(id=pk).first()
+
+    if request.method == "POST":
+        form = ListForm({
+            'name': request.POST['name'],
+            'user': request.user
+        }, instance=list_)
+        success_url = reverse('main:main')
+        if form.is_valid():
+            form.save()
+            return redirect(success_url)
+    else:
+        form = ListForm(instance=list_)
+    return render(request, "edit_list.html", {'form': form})
 
 
 @login_required(login_url='registration/login/')
 def delete_view(request, pk):
-    pass
+    if request.method == 'POST':
+        list_ = ListModel.objects.filter(id=pk).first()
+        if list_:
+            list_.delete()
+            return HttpResponse(status=201)
+    return HttpResponse(status=404)
 
 
 @login_required(login_url='registration/login/')
@@ -61,6 +78,3 @@ def create_view(request):
             form.save()
             return redirect(success_url)
     return render(request, 'new_list.html', {'form': form})
-
-
-

@@ -5,24 +5,29 @@
 {% endblock %}
 
 {% block header %}
-    <div class="table-data_table-header-item-1">{{ list_name.name }}</div>
-    <a class="add_new_list" href="{% url 'list_item:create' pk=list_name.id%}">
+    <div class="table-data_table-header-item-1">
+        <a href="{% url "main:main" %}">{{ list_name.name }}</a>
+    </div>
+    <a class="table-data_table-header-item-2" href="{% url "list_item:all_done" %}">
+            <div class="header__button-create-bundle">all</div>
+        </a>
+        <a class="add_new_list" href="{% url 'list_item:create' pk=list_name.id%}">
                     <div class="header__button-create-bundle">+</div>
-                </a>
-                     </div>
+        </a>
+    </div>
 {% endblock %}
 
         {% block body %}
-        {% for list in lists %}
-            <div class="table-data__table-row">
-            {% if list.is_done %}
-                <div class="table-row_table_cell-1 is_done_text"> {{list.name}}</div>
+        {% for row in list_items %}
+            <div id = "row_{{ row.id }}" class="table-data__table-row">
+            {% if row.is_done %}
+                <div id="isDone_{{ row.id }}" class="table-row_table_cell-1 is_done_text"> {{row.name}}</div>
             {%else %}
-                <div class="table-row_table_cell-1"> {{list.name}}</div>
+                <div id="isDone_{{ row.id }}" class="table-row_table_cell-1"> {{row.name}}</div>
             {% endif %}
                 <div class="buttons">
                     <div class="table-data-two_table-icon">
-                        <a href='{% url 'list_item:edit' pk=list.id %}'>
+                        <a href='{% url 'list_item:edit' pk=row.id %}'>
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -31,9 +36,9 @@
                             </svg>
                         </a>
                     </div>
-                    {% if list.expire_date %}
-                       <a href="#">
-                        <div class="calendarik">{{ list.expire_date }}</div>
+                    {% if row.expire_date %}
+                       <a href="{% url 'list_item:edit' pk=row.id %}">
+                        <div class="calendarik">{{ row.expire_date }}</div>
                         </a>
                     {% else %}
                         <div class="calendarik">
@@ -44,7 +49,7 @@
                     {% endif %}
 
                     <div class="table-row_table_icon">
-                        <a class="delete_button" href="{% url 'list_item:delete' pk=list.id %}">
+                        <a class="delete_button" href="{% url 'list_item:delete' pk=row.id %}">
                             <svg width="20" height="22" viewBox="0 0 20 22" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -59,8 +64,8 @@
         {% endfor %}
     {% endblock %}
 {% block empty_div %}
-    {% if lists|length < 6 %}
-        {% for _ in lists|get_count %}
+    {% if list_items|length < 6 %}
+        {% for _ in list_items|get_count %}
           <div class="table-data__table-row">
             <div class="table-row_table_cell-1"></div>
           </div>
@@ -71,10 +76,120 @@
            <div class="paginator_class">
                <ul class="pagination-wrapper_button">
                     {% for list_item_page in list_pages %}
-                       <li><a class="active" href="{{pk}}?list_item_page={{ list_item_page }}">{{ list_item_page }}</a></li>
+                       <li><a class="active" href="/list/{{ list_name.id }}?list_item_page={{ list_item_page }}">{{ list_item_page }}</a></li>
                    {% endfor %}
                </ul>
            </div>
         </div>
    {% endif %}
+{% endblock %}
+
+{% block js %}
+<script>
+
+const body = document.getElementsByClassName('relationship__table-data')[0];
+const listId = JSON.parse('{{ list_name.id|safe }}');
+const rows = document.querySelectorAll('.table-row_table_cell-1');
+const delButtons = document.querySelectorAll('.delete_button');
+const token= getCookie('csrftoken');
+const deleteAllButton = document.getElementsByClassName('table-data_table-header-item-2')[0];
+
+rows.forEach(handler);
+delButtons.forEach(button => button.addEventListener('click',delFunction));
+deleteAllButton.addEventListener('click',allDone);
+
+function allDone(event) {
+    event.preventDefault();
+    
+
+
+}
+
+function handler(row) {
+    row.addEventListener('click',isDoneRequest);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+function isDoneRequest(event) {
+    const id= event.target.id.split('_').pop();
+    const url = document.location.href.replace(`/${listId}`, '/done/');
+    return fetch(url, {
+        method: 'POST',
+        headers: new  Headers({'X-CSRFToken':token}),
+        redirect: 'follow',
+        body:JSON.stringify({id:id})
+    }).then(respone => {
+        if(respone.status === 201) {
+            if (event.target.classList.contains('is_done_text')) {
+                event.target.classList.remove('is_done_text');
+            } else {
+                event.target.classList.add('is_done_text');
+            }
+        } else {
+            alert('Сервер недоступен');
+
+        }
+    })
+}
+
+function createMessageBlock(title, text) {
+    const divBlock = document.createElement('div');
+    divBlock.className = 'wrapper__auth';
+    divBlock.id = "id_new_edit_block";
+    divBlock.innerHTML = `<div class="auth__column_right"><div class="auth__column_right_form"><div class="auth__column_right_form__header">${ title }</div><div id="message_text"> ${ text }</div><div class="auth__column_right__form_footer"><label class="form_footer_button-submit"><input type="submit" form="auth_form" value="" style="display: none"><a href="#" id="login-submit-btn"><div class="auth__button_submit"  ><span>&#10004</span></div></a></label><label class="form_footer_button-cancel"><a href="#" id="cancel_btn"><div class="auth__button_submit" id="login-cancel-btn" ><span>&#9587</span></div></a></label></div></div></div>`;
+    return divBlock;
+}
+
+function deleteMessageBlock(event) {
+    event.preventDefault();
+    document.getElementById('id_new_edit_block').remove();
+}
+function deleteListItem(url,event) {
+    const pk = url.split('/').pop();
+    const rowId = `row_${pk}`;
+    deleteMessageBlock(event);
+    return fetch(url, {
+        method: 'POST',
+        headers: new  Headers({'X-CSRFToken':token}),
+        redirect: 'follow',
+    }).then(respone => {
+        if(respone.status === 201) {
+           document.getElementById(rowId).remove()
+        } else {
+            alert('Не удалось удалить');
+
+        }
+    })
+}
+
+function delFunction(event) {
+    event.preventDefault();
+
+    const url = event.currentTarget.href;
+    const message = createMessageBlock('Внимание','Вы действительно хотите удалить дело ?');
+    body.appendChild(message);
+    document.getElementById('cancel_btn').addEventListener(
+        'click',event => deleteMessageBlock(event));
+    document.getElementById('login-submit-btn').addEventListener(
+        'click',event => deleteListItem(url, event)
+    )
+}
+</script>
 {% endblock %}

@@ -1,27 +1,29 @@
 from list_item.models import Listitem
 from main.models import ListModel
 from list_item.forms import ListitemForm
-from main.forms import ListForm
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
+import json
 
 PAGE_COUNT = 6
 
 
+@login_required(login_url='/registration/login/')
 # Create your views here.
 def list_item_view(request, pk):
     """view для элементов списка"""
 
     user = request.user
     list_name = get_object_or_404(ListModel, id=pk, user_id=request.user.id)
-    lists = Listitem.objects.filter(list=pk
-                                    ).order_by('-created')
+    list_items = Listitem.objects.filter(list=pk, list__user=user
+                                         ).order_by('-created').order_by('-modified')
 
-    paginator = Paginator(lists, PAGE_COUNT)
+    paginator = Paginator(list_items, PAGE_COUNT)
     list_item_page = request.GET.get('list_item_page')
 
     try:
@@ -31,7 +33,7 @@ def list_item_view(request, pk):
     except EmptyPage:
         list_item_page = paginator.page(paginator.num_pages)
 
-    context = {'lists': list_item_page,
+    context = {'list_items': list_item_page,
                'user': user.username,
                'list_name': list_name,
                'list_pages': list(paginator.page_range),
@@ -42,29 +44,43 @@ def list_item_view(request, pk):
     return render(request, 'list.html', context)
 
 
+@login_required(login_url='/registration/login/')
 def list_item_edit(request, pk):
-    # obj = Listitem.objects.filter(id=pk).first()
-    # form = ListitemForm(instance=obj)
-    # if request.method == "POST":
-    #     obj.name = request.POST.get("name")
-    #     obj.expire_date = request.POST.get("expire_date")
-    #     form = ListitemForm({
-    #         'name': obj.name,
-    #         'expire_date': obj.expire_date
-    #     }, instance=obj)
-    #     success_url = reverse('list_item:list_item', kwargs={'pk': pk})
-    #     if form.is_valid():
-    #         form.save()
-    #         return HttpResponseRedirect(success_url)
-    # else:
-    #     return render(request, "edit_list_item.html", {'form': form, 'obj': obj})
-    pass
+    list_item = Listitem.objects.filter(id=pk).first()
+
+    list_id = list_item.list_id
+
+    if request.method == "POST":
+        form = ListitemForm({
+            'name': request.POST['name'],
+            'expire_date': request.POST['expire_date'],
+            'list': list_id
+        }, instance=list_item)
+        success_url = reverse('list_item:list_item', kwargs={'pk': list_id})
+        if form.is_valid():
+            form.save()
+            return redirect(success_url)
+    else:
+        form = ListitemForm(instance=list_item)
+    return render(request, "edit_list_item.html", {'form': form, 'pk': list_id})
 
 
+@login_required(login_url='/registration/login/')
 def list_item_delete(request, pk):
+    if request.method == 'POST':
+        list_item = Listitem.objects.filter(id=pk).first()
+        if list_item:
+            list_item.delete()
+            return HttpResponse(status=201)
+    return HttpResponse(status=404)
+
+
+@login_required(login_url='/registration/login/')
+def all_done_view(request):
     pass
 
 
+@login_required(login_url='/registration/login/')
 def create_item_view(request, pk):
     form = ListitemForm()
     if request.method == 'POST':
@@ -81,3 +97,14 @@ def create_item_view(request, pk):
             form.save()
             return redirect(success_url)
     return render(request, 'new_list_item.html', {'form': form, 'pk': pk})
+
+
+@login_required(login_url='/registration/login/')
+def done_view(request):
+    data = json.loads(request.body.decode())
+    pk = int(data['id'])
+    list_item = Listitem.objects.get(id=pk)
+    value = not list_item.is_done
+    list_item.is_done = value
+    list_item.save()
+    return HttpResponse(status=201)
