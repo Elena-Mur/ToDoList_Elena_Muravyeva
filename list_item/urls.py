@@ -9,6 +9,6 @@ urlpatterns = [
     path('delete/<int:pk>', list_item_delete, name='delete'),
     path('create/<int:pk>', create_item_view, name='create'),
     path('done/', done_view, name='done'),
-    path('all_done/',all_done_view, name= 'all_done')
+    path('all_done/', all_done_view, name='all_done')
 
 ]

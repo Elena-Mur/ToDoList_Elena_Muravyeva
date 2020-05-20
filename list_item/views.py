@@ -77,7 +77,17 @@ def list_item_delete(request, pk):
 
 @login_required(login_url='/registration/login/')
 def all_done_view(request):
-    pass
+    if request.method == 'POST':
+        data = json.loads(request.body.decode())
+        all_true, list_id = data.get('all_true'), data.get('list_id')
+        value = not all_true
+        if list_id:
+            list_ = ListModel.objects.get(id=list_id)
+            list_.listitem_set.all().update(is_done=value)
+            list_.is_done = value
+            list_.save()
+            return HttpResponse(status=201)
+    return HttpResponse(status=404)
 
 
 @login_required(login_url='/registration/login/')
